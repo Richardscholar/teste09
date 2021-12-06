@@ -1,0 +1,34 @@
+---
+- hosts: server
+  remote_user: richard
+  become: yes
+  tasks:
+   - name: Create a virtual machine on given ESXi hostname
+     vmware_guest:
+      hostname: 192.168.211.128
+      username: root
+      password: 10#lig204A
+      validate_certs: no
+      folder: /
+      name: Vm_PB
+      state: poweredoff
+      guest_id: ubuntu64Guest
+      disk:
+       - size_gb: 40
+         type: thin
+         datastore: datastore1
+      cdrom:
+       path_iso: "[datastore1] ISO/ubuntu-18.04.6-desktop-amd64.iso"
+       state: present
+       type: client
+       controller_number: 0
+       unity_number: 0
+      hardware:
+       memory_mb: 4096
+       num_cpus: 2
+       scsi: paravirtual
+      networks:
+       - name: VM Network
+         device_type: vmxnet3
+     delegate_to: localhost
+     register: deploy_vm
